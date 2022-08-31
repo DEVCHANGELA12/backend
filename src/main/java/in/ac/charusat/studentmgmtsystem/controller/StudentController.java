@@ -1,8 +1,13 @@
 package in.ac.charusat.studentmgmtsystem.controller;
 
 import in.ac.charusat.studentmgmtsystem.model.Student;
+import in.ac.charusat.studentmgmtsystem.payload.LoginRequest;
 import in.ac.charusat.studentmgmtsystem.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -16,6 +21,9 @@ public class StudentController {
 
     @Autowired
     StudentRepository studentRepository;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
 //    List<Student> students = new ArrayList<>(
 //            Arrays.asList(
 //                    new Student(1, "Tom", "US"),
@@ -26,6 +34,15 @@ public class StudentController {
 
     // Mappings - URL endpoints
     // Get the list of all student
+    @PostMapping("/login")
+    public String doLogin(@RequestBody LoginRequest loginRequest){
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                loginRequest.getUsername(),loginRequest.getPassword()
+        ));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return "Log in Success!!!";
+    }
+
     @GetMapping
     public String displayWelcomeMessage(){
         return "<center><h1>Welcome to the Spring Boot Security!!!!</h1></center>";
